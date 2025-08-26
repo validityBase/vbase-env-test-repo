@@ -38,9 +38,9 @@ def main():
     print(f"[sample_pipeline] Environment ID: {env_id}")
     print(f"[sample_pipeline] Entrypoint args: {entrypoint_args}")
 
-    # Create output directory structure (relative to current working directory)
-    output_dir = Path("data/output")
-    logs_dir = Path("logs")
+    # Create output directory structure (relative to work root)
+    output_dir = Path("/work/output/data/output")
+    logs_dir = Path("/work/logs")
 
     # Create all necessary directories
     output_dir.mkdir(parents=True, exist_ok=True)
