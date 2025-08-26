@@ -38,11 +38,9 @@ def main():
     print(f"[sample_pipeline] Environment ID: {env_id}")
     print(f"[sample_pipeline] Entrypoint args: {entrypoint_args}")
 
-    # Create vbase-env directory structure
-    vbase_env_dir = Path("/vbase-env")
-    data_dir = vbase_env_dir / "data"
-    output_dir = data_dir / "output"
-    logs_dir = vbase_env_dir / "logs"
+    # Create output directory structure (relative to current working directory)
+    output_dir = Path("data/output")
+    logs_dir = Path("logs")
 
     # Create all necessary directories
     output_dir.mkdir(parents=True, exist_ok=True)
