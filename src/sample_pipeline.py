@@ -9,14 +9,31 @@ This script simulates a typical data processing pipeline that:
 4. Logs progress
 """
 import json
+import logging
 import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Union
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
-def process_data(input_data):
-    """Process input data and return results."""
+def process_data(
+    input_data: Union[List[Dict[str, Any]], Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Process input data and return results.
+
+    Args:
+        input_data: Input data to process, either a list of dictionaries or a single dictionary
+
+    Returns:
+        Dictionary containing processed data with metadata
+    """
     # Simulate data processing
     processed_data = {
         "input": input_data,
@@ -27,16 +44,20 @@ def process_data(input_data):
     return processed_data
 
 
-def main():
-    """Main entrypoint function."""
-    print("[sample_pipeline] Starting test data processing...")
+def main() -> int:
+    """Main entrypoint function.
+
+    Returns:
+        Exit code (0 for success, non-zero for failure)
+    """
+    logger.info("Starting test data processing...")
 
     # Get environment variables
     env_id = os.environ.get("ENV_ID", "unknown")
     entrypoint_args = os.environ.get("ENTRYPOINT_ARGS", "")
 
-    print(f"[sample_pipeline] Environment ID: {env_id}")
-    print(f"[sample_pipeline] Entrypoint args: {entrypoint_args}")
+    logger.info("Environment ID: %s", env_id)
+    logger.info("Entrypoint args: %s", entrypoint_args)
 
     # Create output directory structure (relative to work root)
     output_dir = Path("/work/output/data/output")
@@ -53,7 +74,7 @@ def main():
         {"id": 3, "name": "Test Item 3", "value": 300},
     ]
 
-    print(f"[sample_pipeline] Processing {len(input_data)} items...")
+    logger.info("Processing %d items...", len(input_data))
 
     # Process data
     results = process_data(input_data)
@@ -86,13 +107,13 @@ def main():
         f.write(f"[{datetime.now().isoformat()}] Items processed: {len(input_data)}\n")
         f.write(f"[{datetime.now().isoformat()}] Processing completed\n")
 
-    print("[sample_pipeline] Output files created:")
-    print(f"[sample_pipeline] - {output_file}")
-    print(f"[sample_pipeline] - {json_output}")
-    print(f"[sample_pipeline] - {csv_output}")
-    print(f"[sample_pipeline] - {log_file}")
+    logger.info("Output files created:")
+    logger.info("- %s", output_file)
+    logger.info("- %s", json_output)
+    logger.info("- %s", csv_output)
+    logger.info("- %s", log_file)
 
-    print("[sample_pipeline] Data processing completed successfully!")
+    logger.info("Data processing completed successfully!")
     return 0
 
 

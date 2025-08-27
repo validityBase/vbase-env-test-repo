@@ -3,13 +3,25 @@
 Complex test script using pandas for vbase_env_runner testing.
 """
 import json
+import logging
 from pathlib import Path
+from typing import Dict, Any
 
 import pandas as pd
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
-def main():
-    """Complex main function using pandas."""
+
+def main() -> int:
+    """Complex main function using pandas.
+
+    Returns:
+        Exit code (0 for success, non-zero for failure)
+    """
     # Create vbase-env directory structure
     vbase_env_dir = Path("/vbase-env")
     data_dir = vbase_env_dir / "data"
@@ -28,20 +40,24 @@ def main():
     )
 
     # Save as CSV
-    df.to_csv(output_dir / "data.csv", index=False)
+    csv_file = output_dir / "data.csv"
+    df.to_csv(csv_file, index=False)
+    logger.info("Data saved to CSV: %s", csv_file)
 
     # Create summary statistics
-    summary = {
+    summary: Dict[str, Any] = {
         "row_count": len(df),
         "column_count": len(df.columns),
         "columns": list(df.columns),
         "dtypes": df.dtypes.to_dict(),
     }
 
-    with open(output_dir / "summary.json", "w", encoding="utf-8") as f:
+    json_file = output_dir / "summary.json"
+    with open(json_file, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, default=str)
 
-    print("[complex_script] Complex data processing completed")
+    logger.info("Summary saved to JSON: %s", json_file)
+    logger.info("Complex data processing completed")
     return 0
 
 

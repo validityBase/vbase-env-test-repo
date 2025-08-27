@@ -1,8 +1,0 @@
-{
-  "version": "1.0.0",
-  "description": "Test configuration for vbase_env_runner",
-  "settings": {
-    "batch_size": 100,
-    "timeout": 300
-  }
-}
