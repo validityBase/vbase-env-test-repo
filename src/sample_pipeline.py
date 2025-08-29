@@ -8,6 +8,7 @@ This script simulates a typical data processing pipeline that:
 3. Generates output files
 4. Logs progress
 """
+import argparse
 import json
 import logging
 import os
@@ -50,7 +51,14 @@ def main() -> int:
     Returns:
         Exit code (0 for success, non-zero for failure)
     """
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="Sample data processing pipeline")
+    parser.add_argument("--test-mode", action="store_true", help="Run in test mode")
+
+    args = parser.parse_args()
+
     logger.info("Starting test data processing...")
+    logger.info("Command line arguments: %s", args)
 
     # Get environment variables
     env_id = os.environ.get("ENV_ID", "unknown")
@@ -67,12 +75,19 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     logs_dir.mkdir(parents=True, exist_ok=True)
 
-    # Simulate input data
-    input_data = [
-        {"id": 1, "name": "Test Item 1", "value": 100},
-        {"id": 2, "name": "Test Item 2", "value": 200},
-        {"id": 3, "name": "Test Item 3", "value": 300},
-    ]
+    # Simulate input data based on arguments
+    if args.test_mode:
+        logger.info("Running in test mode")
+        input_data = [
+            {"id": 1, "name": "Test Item 1", "value": 100, "mode": "test"},
+            {"id": 2, "name": "Test Item 2", "value": 200, "mode": "test"},
+        ]
+    else:
+        input_data = [
+            {"id": 1, "name": "Test Item 1", "value": 100},
+            {"id": 2, "name": "Test Item 2", "value": 200},
+            {"id": 3, "name": "Test Item 3", "value": 300},
+        ]
 
     logger.info("Processing %d items...", len(input_data))
 
