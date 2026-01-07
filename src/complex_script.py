@@ -4,6 +4,7 @@ Complex test script using pandas for vbase_env_runner testing.
 """
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any, Dict
 
@@ -22,10 +23,10 @@ def main() -> int:
     Returns:
         Exit code (0 for success, non-zero for failure)
     """
-    # Create vbase-env directory structure
-    vbase_env_dir = Path("/vbase-env")
-    data_dir = vbase_env_dir / "data"
-    output_dir = data_dir / "output"
+    # Use the standard vbase_env_runner data root (/data in container)
+    # Can be overridden with VBASE_DATA_ROOT for local testing
+    data_root = Path(os.environ.get("VBASE_DATA_ROOT", "/data"))
+    output_dir = data_root / "output"
 
     # Create output directory
     output_dir.mkdir(parents=True, exist_ok=True)

@@ -67,9 +67,18 @@ def main() -> int:
     logger.info("Environment ID: %s", env_id)
     logger.info("Entrypoint args: %s", entrypoint_args)
 
-    # Create output directory structure (relative to work root)
-    output_dir = Path("/work/output/data/output")
-    logs_dir = Path("/work/logs")
+    # Create output directory structure.
+    #
+    # When running under vbase_env_runner, the container mounts the host
+    # `/opt/vbase-envs/data/<ENV_ID>` directory as `/data`, and the supervisor
+    # expects outputs under `/data/output` and logs under `/data/logs`.
+    #
+    # For local testing outside containers, you can override this root by setting
+    # VBASE_DATA_ROOT, for example:
+    #   VBASE_DATA_ROOT=. python src/sample_pipeline.py
+    data_root = Path(os.environ.get("VBASE_DATA_ROOT", "/data"))
+    output_dir = data_root / "output"
+    logs_dir = data_root / "logs"
 
     # Create all necessary directories
     output_dir.mkdir(parents=True, exist_ok=True)
