@@ -3,18 +3,14 @@
 Complex test script using pandas for vbase_env_runner testing.
 """
 import json
-import logging
-import os
-from pathlib import Path
+import sys
 from typing import Any, Dict
 
 import pandas as pd
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+from env_utils import configure_logging, get_data_dirs
+
+logger = configure_logging(__name__)
 
 
 def main() -> int:
@@ -23,15 +19,9 @@ def main() -> int:
     Returns:
         Exit code (0 for success, non-zero for failure)
     """
-    # Use the standard vbase_env_runner data root (/data in container)
-    # Can be overridden with VBASE_DATA_ROOT for local testing
-    data_root = Path(os.environ.get("VBASE_DATA_ROOT", "/data"))
-    output_dir = data_root / "output"
+    dirs = get_data_dirs()
+    dirs.output.mkdir(parents=True, exist_ok=True)
 
-    # Create output directory
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Create a pandas DataFrame
     df = pd.DataFrame(
         {
             "A": [1, 2, 3, 4, 5],
@@ -40,12 +30,10 @@ def main() -> int:
         }
     )
 
-    # Save as CSV
-    csv_file = output_dir / "data.csv"
+    csv_file = dirs.output / "data.csv"
     df.to_csv(csv_file, index=False)
     logger.info("Data saved to CSV: %s", csv_file)
 
-    # Create summary statistics
     summary: Dict[str, Any] = {
         "row_count": len(df),
         "column_count": len(df.columns),
@@ -53,7 +41,7 @@ def main() -> int:
         "dtypes": df.dtypes.to_dict(),
     }
 
-    json_file = output_dir / "summary.json"
+    json_file = dirs.output / "summary.json"
     with open(json_file, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, default=str)
 
@@ -63,4 +51,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
